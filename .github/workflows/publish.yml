@@ -1,50 +1,65 @@
 name: Publish to LinkedIn
+
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-          
-      - name: Install dependencies
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          playwright install --with-deps chromium
-          
-      - name: Setup auth state
+
+      - name: Install Playwright Chromium
+        run: |
+          playwright install chromium
+
+      - name: Setup LinkedIn Auth State
         run: |
           mkdir -p auth
           echo '${{ secrets.LINKEDIN_STATE }}' > auth/linkedin_state.json
-          
-      - name: Generate Post
+
+      - name: Generate LinkedIn Post
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python scripts/generate_post.py
-        
-      - name: Generate Images
-        run: python scripts/generate_image.py
-        
-      - name: Commit and Push generated content
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          python scripts/generate_post.py
+
+      - name: Generate Images
+        run: |
+          python scripts/generate_image.py
+
+      - name: Commit and Push Generated Content
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
           git add post.json docs/
-          git commit -m "chore: auto-generate new linkedin post" || echo "No changes to commit"
-          git push
-        
+
+          git diff --cached --quiet && echo "No changes to commit" || (
+            git commit -m "chore: auto-generate new LinkedIn post"
+            git push
+          )
+
       - name: Publish to LinkedIn
         env:
           CI: "true"
-        run: python scripts/publish_linkedin.py
+        run: |
+          python scripts/publish_linkedin.py
