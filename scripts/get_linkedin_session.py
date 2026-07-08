@@ -9,7 +9,10 @@ def main():
     print("Please log in manually. Once you reach the LinkedIn feed, the session will be saved automatically.")
     
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(
+            headless=False,
+            args=["--disable-blink-features=AutomationControlled"]
+        )
         context = browser.new_context()
         page = context.new_page()
         
