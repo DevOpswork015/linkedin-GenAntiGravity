@@ -45,9 +45,9 @@ def main():
             
             # Click "Start a post"
             print("Clicking 'Start a post'...")
-            start_post_btn = page.locator('button:has-text("Start a post")').first
+            start_post_btn = page.get_by_text("Start a post", exact=True).first
             if not start_post_btn.is_visible():
-                start_post_btn = page.locator('button', has_text="Start a post").first
+                start_post_btn = page.locator('.share-box-feed-entry__trigger')
             start_post_btn.click()
             page.wait_for_timeout(2000)
             
