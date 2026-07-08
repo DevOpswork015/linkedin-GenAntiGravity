@@ -54,7 +54,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add post.json docs/
+          git add -f post.json docs/
 
           git diff --cached --quiet && echo "No changes to commit" || (
             git commit -m "chore: auto-generate new LinkedIn post"
