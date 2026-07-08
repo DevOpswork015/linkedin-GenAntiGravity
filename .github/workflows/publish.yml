@@ -1,11 +1,6 @@
 name: Publish to LinkedIn
 
 on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -60,6 +55,14 @@ jobs:
             git commit -m "chore: auto-generate new LinkedIn post"
             git push
           )
+
+      - name: Upload Post Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkedin-post-content
+          path: |
+            post.json
+            docs/images/
 
       - name: Publish to LinkedIn
         env:
