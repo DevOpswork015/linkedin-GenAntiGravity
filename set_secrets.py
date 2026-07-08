@@ -13,7 +13,7 @@ if not TOKEN:
     print("No GitHub token found in .env")
     sys.exit(1)
     
-REPO = "DevOpswork015/medicum-GenAntiGravity-"
+REPO = "DevOpswork015/linkedin-GenAntiGravity"
 HEADERS = {
     "Authorization": f"token {TOKEN.strip()}",
     "Accept": "application/vnd.github.v3+json",
@@ -45,9 +45,9 @@ def main():
     if groq_key:
         secrets["GROQ_API_KEY"] = groq_key
         
-    if os.path.exists("auth/medium_state.json"):
-        with open("auth/medium_state.json", "r") as f:
-            secrets["MEDIUM_STATE"] = f.read()
+    if os.path.exists("auth/linkedin_state.json"):
+        with open("auth/linkedin_state.json", "r") as f:
+            secrets["LINKEDIN_STATE"] = f.read()
             
     for secret_name, secret_value in secrets.items():
         encrypted_value = encrypt(public_key, secret_value)
