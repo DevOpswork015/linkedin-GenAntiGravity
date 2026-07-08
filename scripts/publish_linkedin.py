@@ -28,12 +28,10 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=os.environ.get("CI") == "true",
-            channel="chrome",
             args=["--disable-blink-features=AutomationControlled"]
         )
         context = browser.new_context(
-            storage_state=state_file,
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            storage_state=state_file
         )
         page = context.new_page()
         
@@ -43,9 +41,13 @@ def main():
             page.wait_for_load_state("domcontentloaded")
             page.wait_for_timeout(5000)
             
+            print(f"Current page title: {page.title()}")
+            
             # Click "Start a post"
             print("Clicking 'Start a post'...")
             start_post_btn = page.locator('button:has-text("Start a post")').first
+            if not start_post_btn.is_visible():
+                start_post_btn = page.locator('button', has_text="Start a post").first
             start_post_btn.click()
             page.wait_for_timeout(2000)
             
